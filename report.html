@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9ecef;
+        }
+        .navbar {
+            background-color: #343a40;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .navbar a:hover {
+            background-color: #495057;
+            color: #f8f9fa;
+        }
+        .container {
+            margin: 20px auto;
+            max-width: 90%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #343a40;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .report-columns {
+            display: flex;
+            justify-content: space-between;
+        }
+        .report-column {
+            width: 48%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .report-column h2 {
+            color: #495057;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .early-late {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('live_stream') }}">Live Stream</a>
+        <a href="{{ url_for('add_employee') }}">Add Employee</a>
+        <a href="{{ url_for('report') }}">Report</a>
+    </div>
+
+    <div class="container">
+        <h1>Attendance Report</h1>
+        <div class="report-columns">
+            <!-- Present Employees -->
+            <div class="report-column">
+                <h2>Present Employees</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Check-In Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in present_employees %}
+                        <tr>
+                            <td>{{ employee.name }}</td>
+                            <td>{{ employee.check_in_time }}</td>
+                            <td class="{{ 'early-late' if employee.is_early or employee.is_late else '' }}">
+                                {% if employee.is_early %} Early {% elif employee.is_late %} Late {% else %} On Time {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">No employees present today.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Absent Employees -->
+            <div class="report-column">
+                <h2>Absent Employees</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Scheduled Check-In Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in absent_employees %}
+                        <tr>
+                            <td>{{ employee.name }}</td>
+                            <td>{{ employee.scheduled_check_in_time }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2">No employees absent today.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
